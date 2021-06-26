@@ -1,5 +1,7 @@
 Manifest-Version: 1.0
-Built-By: diegolamantia
-Build-Jdk: 11.0.2
+Build-Jdk-Spec: 11
+Implementation-Title: Challenge
+Implementation-Version: 0.0.1-SNAPSHOT
+Implementation-Vendor: Diego La Mantia
 Created-By: Maven Integration for Eclipse
 
