@@ -1,6 +1,5 @@
 package gmedica.challenge.datamanager;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,39 +14,43 @@ import org.apache.commons.csv.CSVPrinter;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.opencsv.bean.ColumnPositionMappingStrategy;
-import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.enums.CSVReaderNullFieldIndicator;
 
 import gmedica.challenge.model.Data;
+import gmedica.challenge.model.DataCsv;
 
 public class UploadDownloadData {
 	
 	public static List<Data> parseCsvFile(InputStream is) {
 		String[] CSV_HEADER = { "source","codeListCode","code","displayValue","longDescription","fromDate","toDate","sortingPriority" };
 		Reader fileReader = null;
-		CsvToBean<Data> csvToBean = null;
 	
-		List<Data> customers = new ArrayList<Data>();
+		List<Data> allData = new ArrayList<Data>();
 		
 		try {
 			fileReader = new InputStreamReader(is);
-			BufferedReader reader = new BufferedReader(fileReader);
-			while(reader.ready()) {
-			     String line = reader.readLine();
-			     System.out.println(line);
-			}
-			ColumnPositionMappingStrategy<Data> mappingStrategy = new ColumnPositionMappingStrategy<Data>();
+			ColumnPositionMappingStrategy<DataCsv> mappingStrategy = new ColumnPositionMappingStrategy<DataCsv>();
 	
-			mappingStrategy.setType(Data.class);
+			mappingStrategy.setType(DataCsv.class);
 			mappingStrategy.setColumnMapping(CSV_HEADER);
 	
-			csvToBean = new CsvToBeanBuilder<Data>(fileReader).withMappingStrategy(mappingStrategy).withSkipLines(1)
-					.withIgnoreLeadingWhiteSpace(true).withFieldAsNull(CSVReaderNullFieldIndicator.BOTH).build();
-	
-			customers = csvToBean.parse();
+			List<DataCsv> beans = new CsvToBeanBuilder(fileReader).withType(DataCsv.class).build().parse();
 			
-			return customers;
+			for(DataCsv d : beans) {
+				Data data = new Data();
+				data.setCode(d.getCode());
+				data.setCodeListCode(d.getCodeListCode());
+				data.setDisplayValue(d.getDisplayValue());
+				data.setFromDate(d.getFromDate());
+				data.setToDate(d.getToDate());
+				data.setLongDescription(d.getLongDescription());
+				data.setSource(d.getSource());
+				if(!d.getSortingPriority().isEmpty())
+					data.setSortingPriority(Integer.valueOf(d.getSortingPriority()));
+				allData.add(data);
+			}
+
+			return allData;
 		} catch (Exception e) {
 			System.out.println("Reading CSV Error!");
 			e.printStackTrace();
@@ -60,7 +63,7 @@ public class UploadDownloadData {
 			}
 		}
 		
-		return customers;
+		return allData;
 	}
 	
 	public static void allDataToCsv(Writer writer, List<Data> allData) throws IOException {
@@ -68,10 +71,19 @@ public class UploadDownloadData {
 		try (CSVPrinter csvPrinter = new CSVPrinter(writer,
 				CSVFormat.DEFAULT.withHeader("source","codeListCode","code","displayValue","longDescription","fromDate","toDate","sortingPriority"));) {
 			for (Data d : allData) {
+				String fromDate = "";
+				String toDate = "";
+				String sortingPriority = "";
+				if(d.getFromDate() != null)
+					fromDate = d.getFromDate().toString();
+				if(d.getToDate() != null)
+					toDate = d.getToDate().toString();
+				if(d.getSortingPriority() != null)
+					sortingPriority = d.getSortingPriority().toString();
 				List<String> data = Arrays.asList(d.getSource(),
 						d.getCodeListCode(), d.getCode(), d.getDisplayValue(),
-						d.getLongDescription(), d.getFromDate().toString(),
-						d.getToDate().toString(), String.valueOf(d.getSortingPriority()));
+						d.getLongDescription(), fromDate,
+						toDate, sortingPriority);
 
 				csvPrinter.printRecord(data);
 			}
@@ -82,14 +94,12 @@ public class UploadDownloadData {
 		}
 	}
 	
-	public static void allValuesToCsv(Writer writer, List<String> allData) throws IOException {
+	public static void allValuesToCsv(Writer writer, List<String> allData, String code) throws IOException {
 
 		try (CSVPrinter csvPrinter = new CSVPrinter(writer,
-				CSVFormat.DEFAULT.withHeader("source","codeListCode","code","displayValue","longDescription","fromDate","toDate","sortingPriority"));) {
+				CSVFormat.DEFAULT.withHeader(code));) {
 			for (String d : allData) {
-				List<String> data = Arrays.asList(d);
-
-				csvPrinter.printRecord(data);
+				csvPrinter.printRecord(d);
 			}
 			csvPrinter.flush();
 		} catch (Exception e) {

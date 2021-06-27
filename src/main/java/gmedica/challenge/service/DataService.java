@@ -43,24 +43,28 @@ public class DataService {
 		List<String> result = new ArrayList<String>();
 		List<Data> allData = dataRepo.findAll();
 		for(Data d : allData) {
-			if(code=="source")
-				result.add(d.getSource());
-			else if(code=="codeListCode")
-				result.add(d.getCodeListCode());
-			else if(code=="code")
-				result.add(d.getCode());
-			else if(code=="displayValue")
-				result.add(d.getDisplayValue());
-			else if(code=="longDescription")
-				result.add(d.getLongDescription());
-			else if(code=="fromDate")
-				result.add(d.getFromDate().toString());
-			else if(code=="toDate")
-				result.add(d.getToDate().toString());
-			else if(code=="sortingPriority")
-				result.add(String.valueOf(d.getSortingPriority()));
+			try {
+				if(code.toLowerCase().contentEquals("source"))
+					result.add(d.getSource());
+				else if(code.toLowerCase().contentEquals("codelistcode"))
+					result.add(d.getCodeListCode());
+				else if(code.toLowerCase().contentEquals("code"))
+					result.add(d.getCode());
+				else if(code.toLowerCase().contentEquals("displayvalue"))
+					result.add(d.getDisplayValue());
+				else if(code.toLowerCase().contentEquals("longdescription"))
+					result.add(d.getLongDescription());
+				else if(code.toLowerCase().contentEquals("fromdate"))
+					result.add(d.getFromDate().toString());
+				else if(code.toLowerCase().contentEquals("todate"))
+					result.add(d.getToDate().toString());
+				else if(code.toLowerCase().contentEquals("sortingpriority"))
+					result.add(d.getSortingPriority().toString());
+			}catch(NullPointerException ex) {
+				result.add("");
+			}
 		}
-		UploadDownloadData.allValuesToCsv(writer, result);
+		UploadDownloadData.allValuesToCsv(writer, result, code);
 	}
 	
 	public void deleteAll() {

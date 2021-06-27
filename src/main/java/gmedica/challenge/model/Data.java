@@ -1,6 +1,8 @@
 package gmedica.challenge.model;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,16 +23,18 @@ public class Data {
 	private String displayValue;
 	private String longDescription;
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-	private ZonedDateTime fromDate;
+	private LocalDate fromDate;
+	//private String fromDate;
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-	private ZonedDateTime toDate;
+	private LocalDate toDate;
+	//private String toDate;
+	//private Integer sortingPriority;
 	private Integer sortingPriority;
 	
 	public Data() {}
 	
 	public Data(Long id, String source, String codeListCode, String code, String displayValue, String longDescription,
-			ZonedDateTime fromDate, ZonedDateTime toDate, Integer sortingPriority) {
-		super();
+			LocalDate fromDate, LocalDate toDate, Integer sortingPriority) {
 		this.id = id;
 		this.source = source;
 		this.codeListCode = codeListCode;
@@ -78,16 +82,34 @@ public class Data {
 	public void setLongDescription(String longDescription) {
 		this.longDescription = longDescription;
 	}
-	public ZonedDateTime getFromDate() {
+	public LocalDate getFromDate() {
 		return fromDate;
 	}
-	public void setFromDate(ZonedDateTime fromDate) {
+	public void setFromDate(String fromDate) {
+		LocalDate dateTime = null;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		try {
+			dateTime = LocalDate.parse(fromDate, formatter);
+		}
+		catch(DateTimeParseException exception) {}
+		this.fromDate = dateTime;
+	}
+	public void setFromDate(LocalDate fromDate) {
 		this.fromDate = fromDate;
 	}
-	public ZonedDateTime getToDate() {
+	public LocalDate getToDate() {
 		return toDate;
 	}
-	public void setToDate(ZonedDateTime toDate) {
+	public void setToDate(String toDate) {
+		LocalDate dateTime = null;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		try {
+			dateTime = LocalDate.parse(toDate, formatter);
+		}
+		catch(DateTimeParseException exception) {}
+		this.toDate = dateTime;
+	}
+	public void setToDate(LocalDate toDate) {
 		this.toDate = toDate;
 	}
 	public Integer getSortingPriority() {

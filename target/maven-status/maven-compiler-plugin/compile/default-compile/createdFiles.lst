@@ -1,7 +1,0 @@
-gmedica/challenge/controller/DataController.class
-gmedica/challenge/service/DataService.class
-gmedica/challenge/model/Data.class
-gmedica/challenge/datamanager/UploadDownloadData.class
-gmedica/challenge/Application.class
-gmedica/challenge/configuration/SwaggerConfig.class
-gmedica/challenge/repository/DataRepository.class
