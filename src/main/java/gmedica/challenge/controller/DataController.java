@@ -33,13 +33,13 @@ public class DataController {
 			response = "No selected file to upload";
 			return new ResponseEntity<String>(response, HttpStatus.BAD_REQUEST);
 		}
-	
+		
 		// checking the upload file's type is CSV or NOT
 		if(!UploadDownloadData.isCSVFile(csvfile)) {
 			response = "Error: this is not a CSV file";
 			return new ResponseEntity<String>(response, HttpStatus.BAD_REQUEST);
 		}
-		  
+		
 		 
 		try {
 			// save file data to database

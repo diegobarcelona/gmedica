@@ -24,11 +24,8 @@ public class Data {
 	private String longDescription;
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate fromDate;
-	//private String fromDate;
 	@DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
 	private LocalDate toDate;
-	//private String toDate;
-	//private Integer sortingPriority;
 	private Integer sortingPriority;
 	
 	public Data() {}
